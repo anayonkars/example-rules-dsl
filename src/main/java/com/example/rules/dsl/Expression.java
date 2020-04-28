@@ -28,4 +28,8 @@ public class Expression<T> {
     public Expression<T> and(Expression<T> expression) {
         return new Expression<T>(this.predicate.and(expression.getPredicate()));
     }
+
+    public Expression<T> not() {
+        return new Expression<>(this.predicate.negate());
+    }
 }

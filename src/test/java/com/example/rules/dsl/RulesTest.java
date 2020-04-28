@@ -55,4 +55,24 @@ public class RulesTest {
         assertFalse(stringNotNullAndNotEmptyExpression.execute(new String()));
         assertTrue(stringNotNullAndNotEmptyExpression.execute("abc"));
     }
+
+    public void shouldBeAbleToEvaluateNegativeCondition() {
+        Expression<String> stringNullExpression = new Expression<>(s -> s == null);
+        Expression<String> stringNotNullExpression = stringNullExpression.not();
+        assertTrue(stringNotNullExpression.execute(new String()));
+        assertFalse(stringNotNullExpression.execute(null));
+    }
+
+    @Test
+    public void shouldBeAbleToEvaluateCompositeCondition() {
+        Expression<Integer> integerZeroExpression = new Expression<>(i -> i != null && i == 0);
+        Expression<Integer> integerNegativeExpression = new Expression<>(i -> i != null && i < 0);
+        Expression<Integer> integerEvenExpression = new Expression<>(i -> i % 2 == 0);
+        Expression<Integer> integerPositiveEvenExpression = integerZeroExpression.not()
+                                                            .and(integerNegativeExpression.not())
+                                                            .and(integerEvenExpression);
+        assertTrue(integerPositiveEvenExpression.execute(6));
+        assertFalse(integerPositiveEvenExpression.execute(-6));
+        assertFalse(integerPositiveEvenExpression.execute(5));
+    }
 }
