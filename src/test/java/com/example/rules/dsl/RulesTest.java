@@ -80,9 +80,9 @@ public class RulesTest {
         assertTrue(stringNotNullAndNotEmptyExpression.execute("abc"));
     }
 
+    @Test
     public void shouldBeAbleToEvaluateNegativeCondition() {
         Predicate<String> nullString = s -> s == null;
-        Expression<String> stringNullExpression = new Expression<>(nullString);
         Expression stringNotNullExpression = new ExpressionBuilder<String>()
                                                     .not(nullString)
                                                     .build();
@@ -93,11 +93,8 @@ public class RulesTest {
     @Test
     public void shouldBeAbleToEvaluateCompositeCondition() {
         Predicate<Integer> zeroInteger = i -> i != null && i == 0;
-        Expression<Integer> integerZeroExpression = new Expression<>(zeroInteger);
         Predicate<Integer> negativeInteger = i -> i != null && i < 0;
-        Expression<Integer> integerNegativeExpression = new Expression<>(negativeInteger);
         Predicate<Integer> evenInteger = i -> i % 2 == 0;
-        Expression<Integer> integerEvenExpression = new Expression<>(evenInteger);
         Expression<Integer> integerPositiveEvenExpression = new ExpressionBuilder<Integer>().
                                                                     not(zeroInteger)
                                                                     .andnot(negativeInteger)

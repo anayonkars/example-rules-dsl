@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import static com.example.rules.dsl.employee.EmployeeBuilder.anEmployee;
 import static com.example.rules.dsl.employee.EmployeeRulesFactory.*;
-import static com.example.rules.dsl.employee.EmployeeRulesFactory.employeeEligibleForInternalJobSwitch;
 import static com.example.rules.dsl.employee.RatingValue.EXTRAORDINARY;
 import static com.example.rules.dsl.employee.RoleValue.ENGG;
 import static java.time.LocalDateTime.now;
@@ -16,14 +15,11 @@ import static org.junit.Assert.assertTrue;
 public class EmployeeRulesTest {
     @Test
     public void shouldEvaluateEmployeeForGratuity() {
-        Expression<Employee> employeeEligibleForGratuity = new ExpressionBuilder<Employee>()
-                .withPredicate(employeeEligibleForGratuity())
-                .build();
-        assertFalse(employeeEligibleForGratuity.execute(anEmployee()
+        assertFalse(employeeEligibleForGratuity().execute(anEmployee()
                                                         .withId("123")
                                                         .withDoj(now().minusYears(4))
                                                         .build()));
-        assertTrue(employeeEligibleForGratuity.execute(anEmployee()
+        assertTrue(employeeEligibleForGratuity().execute(anEmployee()
                                                         .withId("123")
                                                         .withDoj(now().minusYears(6))
                                                         .build()));
@@ -39,8 +35,10 @@ public class EmployeeRulesTest {
         assertTrue(employeeEligibleForInternalJobSwitch()
                     .execute(anEmployee()
                                 .withDoj(now().minusYears(2))
-                                .withPerformanceRating(new PerformanceRating(EXTRAORDINARY, now().minusYears(1)))
-                                .withRole(new Role(ENGG, now().minusYears(1).minusDays(1)))
+                                .withPerformanceRating(new PerformanceRating(EXTRAORDINARY,
+                                                                            now().minusYears(1)))
+                                .withRole(new Role(ENGG,
+                                                    now().minusYears(1).minusDays(1)))
                                 .build()));
     }
 

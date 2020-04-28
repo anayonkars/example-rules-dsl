@@ -17,5 +17,4 @@ public class Expression<T> {
         return predicate != null && predicate.test(t);
     }
 
-
 }

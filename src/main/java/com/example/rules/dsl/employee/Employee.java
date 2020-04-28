@@ -9,7 +9,10 @@ public class Employee {
     private PerformanceRating performanceRating;
     private Role role;
 
-    public Employee(String id, LocalDateTime doj, PerformanceRating performanceRating, Role role) {
+    public Employee(String id,
+                    LocalDateTime doj,
+                    PerformanceRating performanceRating,
+                    Role role) {
         this.id = id;
         this.doj = doj;
         this.performanceRating = performanceRating;

@@ -12,8 +12,10 @@ public final class EmployeeRulesFactory {
     private EmployeeRulesFactory() {
     }
 
-    public static Predicate<Employee> employeeEligibleForGratuity() {
-        return e -> e.getDoj().isBefore(LocalDateTime.now().minusYears(5));
+    public static Expression<Employee> employeeEligibleForGratuity() {
+        return new ExpressionBuilder<Employee>()
+                .withPredicate(e -> e.getDoj().isBefore(LocalDateTime.now().minusYears(5)))
+                .build();
     }
 
     private static Predicate<Employee> employeeSpentOneYearInCurrentRole() {
@@ -21,7 +23,7 @@ public final class EmployeeRulesFactory {
                 && e.getRole().getRoleDate().isBefore(now().minusYears(1));
     }
 
-    private static Predicate<Employee> employeeWithRatingEligibleForInternalJobSwitch() {
+    private static Predicate<Employee> employeeWithRatingAboveExpectationsOrHigher() {
         return e -> e.getPerformanceRating() != null
                 && RatingValue.ABOVE_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) <= 0;
     }
@@ -31,7 +33,7 @@ public final class EmployeeRulesFactory {
                 && RatingValue.LOW_PERFORMANCE.equals(e.getPerformanceRating().getRatingValue());
     }
 
-    public static Predicate<Employee> newEmployee() {
+    private static Predicate<Employee> newEmployee() {
         return e -> e.getDoj().isAfter(now().minusMonths(6));
     }
 
@@ -39,13 +41,9 @@ public final class EmployeeRulesFactory {
         return new ExpressionBuilder<Employee>()
                 .not(newEmployee())
                 .andnot(employeeWithBadRatingInLastThreeMonthsOrLess())
-                .and(employeeWithRatingEligibleForInternalJobSwitch())
+                .and(employeeWithRatingAboveExpectationsOrHigher())
                 .and(employeeSpentOneYearInCurrentRole())
                 .build();
     }
-    /*newEmployee().not()
-                        .and(employeeWithBadRatingInLastThreeMonthsOrLess().not())
-                        .and(employeeWithRatingEligibleForInternalJobSwitch())
-                        .and(employeeSpentOneYearInCurrentRole()*/
 
 }
