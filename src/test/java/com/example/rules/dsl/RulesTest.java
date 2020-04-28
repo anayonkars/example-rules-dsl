@@ -2,9 +2,12 @@ package com.example.rules.dsl;
 
 import org.junit.Test;
 
+import java.util.function.Predicate;
+
 import static org.junit.Assert.*;
 
 public class RulesTest {
+
 
     @Test
     public void shouldBeAbleToCreateRule() {
@@ -15,20 +18,34 @@ public class RulesTest {
 
     @Test
     public void shouldBeAbleToEvaluateSimpleExpression() {
-        Expression<String> ex = new Expression<>(s -> s != null);
+        Predicate<String> notNullString = s -> s != null;
+        Expression<String> ex = new ExpressionBuilder<String>()
+                                    .withPredicate(notNullString)
+                                    .build();
         boolean result = ex.execute(new String());
         assertTrue(result);
     }
 
     @Test
     public void shouldBeAbleToEvaluateSimpleOrCondition() {
-        Expression<String> stringNullExpression = new Expression<>(s -> s == null);
-        Expression<String> stringEmptyExpression = new Expression<>(s -> s != null && s.isEmpty());
-        Expression<String> stringNullOrEmptyExpression = stringNullExpression.or(stringEmptyExpression);
+        Predicate<String> nullString = s -> s == null;
+        Expression<String> stringNullExpression = new ExpressionBuilder<String>()
+                                                    .withPredicate(nullString)
+                                                    .build();
+        Predicate<String> emptyString = s -> s != null && s.isEmpty();
+        Expression<String> stringEmptyExpression = new ExpressionBuilder<String>()
+                                                    .withPredicate(emptyString)
+                                                    .build();
+        Expression<String> stringNullOrEmptyExpression = new ExpressionBuilder<String>()
+                                                            .withPredicate(nullString)
+                                                            .or(emptyString)
+                                                            .build();
         assertForShouldBeAbleToEvaluateSimpleOrCondition(stringNullExpression, stringEmptyExpression, stringNullOrEmptyExpression);
     }
 
-    private void assertForShouldBeAbleToEvaluateSimpleOrCondition(Expression<String> stringNullExpression, Expression<String> stringEmptyExpression, Expression<String> stringNullOrEmptyExpression) {
+    private void assertForShouldBeAbleToEvaluateSimpleOrCondition(Expression<String> stringNullExpression,
+                                                                  Expression<String> stringEmptyExpression,
+                                                                  Expression<String> stringNullOrEmptyExpression) {
         assertTrue(stringNullExpression.execute(null));
         assertFalse(stringNullExpression.execute(new String()));
         assertFalse(stringEmptyExpression.execute(null));
@@ -39,9 +56,14 @@ public class RulesTest {
 
     @Test
     public void shouldBeAbleToEvaluateSimpleAndCondition() {
-        Expression<String> stringNotNullExpression = new Expression<>(s -> s != null);
-        Expression<String> stringNotEmptyExpression = new Expression<>(s -> s != null && !s.isEmpty());
-        Expression<String> stringNotNullAndNotEmptyExpression = stringNotNullExpression.and(stringNotEmptyExpression);
+        Predicate<String> nonNullString = s -> s != null;
+        Expression<String> stringNotNullExpression = new Expression<>(nonNullString);
+        Predicate<String> nonEmptyString = s -> s != null && !s.isEmpty();
+        Expression<String> stringNotEmptyExpression = new Expression<>(nonEmptyString);
+        Expression<String> stringNotNullAndNotEmptyExpression = new ExpressionBuilder<String>()
+                                                                    .withPredicate(nonNullString)
+                                                                    .and(nonEmptyString)
+                                                                    .build();
         assertForShouldBeAbleToEvaluateSimpleAndCondition(stringNotNullExpression, stringNotEmptyExpression, stringNotNullAndNotEmptyExpression);
     }
 
@@ -57,20 +79,28 @@ public class RulesTest {
     }
 
     public void shouldBeAbleToEvaluateNegativeCondition() {
-        Expression<String> stringNullExpression = new Expression<>(s -> s == null);
-        Expression<String> stringNotNullExpression = stringNullExpression.not();
+        Predicate<String> nullString = s -> s == null;
+        Expression<String> stringNullExpression = new Expression<>(nullString);
+        Expression stringNotNullExpression = new ExpressionBuilder<String>()
+                                                    .withPredicate(nullString.negate())
+                                                    .build();
         assertTrue(stringNotNullExpression.execute(new String()));
         assertFalse(stringNotNullExpression.execute(null));
     }
 
     @Test
     public void shouldBeAbleToEvaluateCompositeCondition() {
-        Expression<Integer> integerZeroExpression = new Expression<>(i -> i != null && i == 0);
-        Expression<Integer> integerNegativeExpression = new Expression<>(i -> i != null && i < 0);
-        Expression<Integer> integerEvenExpression = new Expression<>(i -> i % 2 == 0);
-        Expression<Integer> integerPositiveEvenExpression = integerZeroExpression.not()
-                                                            .and(integerNegativeExpression.not())
-                                                            .and(integerEvenExpression);
+        Predicate<Integer> zeroInteger = i -> i != null && i == 0;
+        Expression<Integer> integerZeroExpression = new Expression<>(zeroInteger);
+        Predicate<Integer> negativeInteger = i -> i != null && i < 0;
+        Expression<Integer> integerNegativeExpression = new Expression<>(negativeInteger);
+        Predicate<Integer> evenInteger = i -> i % 2 == 0;
+        Expression<Integer> integerEvenExpression = new Expression<>(evenInteger);
+        Expression<Integer> integerPositiveEvenExpression = new ExpressionBuilder<Integer>().
+                withPredicate(zeroInteger.negate())
+                .and(negativeInteger.negate())
+                .and(evenInteger)
+                .build();
         assertTrue(integerPositiveEvenExpression.execute(6));
         assertFalse(integerPositiveEvenExpression.execute(-6));
         assertFalse(integerPositiveEvenExpression.execute(5));

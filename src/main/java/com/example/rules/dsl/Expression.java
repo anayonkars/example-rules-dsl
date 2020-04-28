@@ -21,15 +21,7 @@ public class Expression<T> {
         return predicate;
     }
 
-    public Expression or(Expression<T> expression) {
-        return new Expression<T>(this.predicate.or(expression.getPredicate()));
-    }
 
-    public Expression<T> and(Expression<T> expression) {
-        return new Expression<T>(this.predicate.and(expression.getPredicate()));
-    }
 
-    public Expression<T> not() {
-        return new Expression<>(this.predicate.negate());
-    }
+
 }
