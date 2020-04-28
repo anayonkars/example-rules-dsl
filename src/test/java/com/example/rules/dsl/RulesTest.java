@@ -1,5 +1,7 @@
 package com.example.rules.dsl;
 
+import com.example.rules.dsl.expression.Expression;
+import com.example.rules.dsl.expression.ExpressionBuilder;
 import org.junit.Test;
 
 import java.util.function.Predicate;
@@ -82,7 +84,7 @@ public class RulesTest {
         Predicate<String> nullString = s -> s == null;
         Expression<String> stringNullExpression = new Expression<>(nullString);
         Expression stringNotNullExpression = new ExpressionBuilder<String>()
-                                                    .withPredicate(nullString.negate())
+                                                    .not(nullString)
                                                     .build();
         assertTrue(stringNotNullExpression.execute(new String()));
         assertFalse(stringNotNullExpression.execute(null));
@@ -97,10 +99,10 @@ public class RulesTest {
         Predicate<Integer> evenInteger = i -> i % 2 == 0;
         Expression<Integer> integerEvenExpression = new Expression<>(evenInteger);
         Expression<Integer> integerPositiveEvenExpression = new ExpressionBuilder<Integer>().
-                withPredicate(zeroInteger.negate())
-                .and(negativeInteger.negate())
-                .and(evenInteger)
-                .build();
+                                                                    not(zeroInteger)
+                                                                    .andnot(negativeInteger)
+                                                                    .and(evenInteger)
+                                                                    .build();
         assertTrue(integerPositiveEvenExpression.execute(6));
         assertFalse(integerPositiveEvenExpression.execute(-6));
         assertFalse(integerPositiveEvenExpression.execute(5));

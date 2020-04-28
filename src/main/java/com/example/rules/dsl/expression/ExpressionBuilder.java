@@ -1,4 +1,4 @@
-package com.example.rules.dsl;
+package com.example.rules.dsl.expression;
 
 import java.util.function.Predicate;
 
@@ -22,18 +22,28 @@ public class ExpressionBuilder<T> {
         return this;
     }
 
+    public ExpressionBuilder<T> ornot(Predicate<T> predicate) {
+        this.predicate = this.predicate.or(predicate.negate());
+        return this;
+    }
+
     public ExpressionBuilder<T> and(Predicate<T> predicate) {
         this.predicate = this.predicate.and(predicate);
         return this;
     }
 
-    public ExpressionBuilder<T> not() {
-        this.predicate = this.predicate.negate();
+    public ExpressionBuilder<T> andnot(Predicate<T> predicate) {
+        this.predicate = this.predicate.and(predicate.negate());
         return this;
     }
 
-    public static Predicate not(Predicate predicate) {
-        return predicate.negate();
+    public ExpressionBuilder<T> not(Predicate<T> predicate) {
+        if(this.predicate != null) {
+            throw new UnsupportedOperationException("not with argument must not accompany predefined expression");
+        }
+        this.predicate = predicate.negate();
+        return this;
     }
+
 
 }

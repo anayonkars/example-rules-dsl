@@ -1,7 +1,7 @@
 package com.example.rules.dsl.employee;
 
-import com.example.rules.dsl.Expression;
-import com.example.rules.dsl.ExpressionBuilder;
+import com.example.rules.dsl.expression.Expression;
+import com.example.rules.dsl.expression.ExpressionBuilder;
 
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
@@ -37,8 +37,8 @@ public final class EmployeeRulesFactory {
 
     public static Expression<Employee> employeeEligibleForInternalJobSwitch() {
         return new ExpressionBuilder<Employee>()
-                .withPredicate(newEmployee().negate())
-                .and(employeeWithBadRatingInLastThreeMonthsOrLess().negate())
+                .not(newEmployee())
+                .andnot(employeeWithBadRatingInLastThreeMonthsOrLess())
                 .and(employeeWithRatingEligibleForInternalJobSwitch())
                 .and(employeeSpentOneYearInCurrentRole())
                 .build();

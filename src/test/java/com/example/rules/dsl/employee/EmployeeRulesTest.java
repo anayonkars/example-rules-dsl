@@ -1,7 +1,7 @@
 package com.example.rules.dsl.employee;
 
-import com.example.rules.dsl.Expression;
-import com.example.rules.dsl.ExpressionBuilder;
+import com.example.rules.dsl.expression.Expression;
+import com.example.rules.dsl.expression.ExpressionBuilder;
 import org.junit.Test;
 
 import static com.example.rules.dsl.employee.EmployeeBuilder.anEmployee;

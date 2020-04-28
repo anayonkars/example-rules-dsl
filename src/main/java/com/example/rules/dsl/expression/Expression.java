@@ -1,4 +1,4 @@
-package com.example.rules.dsl;
+package com.example.rules.dsl.expression;
 
 import java.util.function.Predicate;
 
