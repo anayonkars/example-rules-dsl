@@ -24,7 +24,7 @@ public class RulesTest {
     public void shouldBeAbleToEvaluateSimpleOrCondition() {
         Expression<String> stringNullExpression = new Expression<>(s -> s == null);
         Expression<String> stringEmptyExpression = new Expression<>(s -> s != null && s.isEmpty());
-        Expression<String> stringNullOrEmptyExpression = stringNullExpression.and(stringEmptyExpression);
+        Expression<String> stringNullOrEmptyExpression = stringNullExpression.or(stringEmptyExpression);
         assertForShouldBeAbleToEvaluateSimpleOrCondition(stringNullExpression, stringEmptyExpression, stringNullOrEmptyExpression);
     }
 
@@ -35,5 +35,24 @@ public class RulesTest {
         assertTrue(stringEmptyExpression.execute(new String()));
         assertTrue(stringNullOrEmptyExpression.execute(null));
         assertTrue(stringNullOrEmptyExpression.execute(new String()));
+    }
+
+    @Test
+    public void shouldBeAbleToEvaluateSimpleAndCondition() {
+        Expression<String> stringNotNullExpression = new Expression<>(s -> s != null);
+        Expression<String> stringNotEmptyExpression = new Expression<>(s -> s != null && !s.isEmpty());
+        Expression<String> stringNotNullAndNotEmptyExpression = stringNotNullExpression.and(stringNotEmptyExpression);
+        assertForShouldBeAbleToEvaluateSimpleAndCondition(stringNotNullExpression, stringNotEmptyExpression, stringNotNullAndNotEmptyExpression);
+    }
+
+    private void assertForShouldBeAbleToEvaluateSimpleAndCondition(Expression<String> stringNotNullExpression, Expression<String> stringNotEmptyExpression, Expression<String> stringNotNullAndNotEmptyExpression) {
+        assertFalse(stringNotNullExpression.execute(null));
+        assertTrue(stringNotNullExpression.execute(new String()));
+        assertFalse(stringNotEmptyExpression.execute(null));
+        assertFalse(stringNotEmptyExpression.execute(new String()));
+        assertTrue(stringNotEmptyExpression.execute("abc"));
+        assertFalse(stringNotNullAndNotEmptyExpression.execute(null));
+        assertFalse(stringNotNullAndNotEmptyExpression.execute(new String()));
+        assertTrue(stringNotNullAndNotEmptyExpression.execute("abc"));
     }
 }

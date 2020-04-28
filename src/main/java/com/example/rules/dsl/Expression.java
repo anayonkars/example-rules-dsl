@@ -1,7 +1,5 @@
 package com.example.rules.dsl;
 
-import javafx.beans.property.adapter.JavaBeanBooleanPropertyBuilder;
-
 import java.util.function.Predicate;
 
 public class Expression<T> {
@@ -23,7 +21,11 @@ public class Expression<T> {
         return predicate;
     }
 
-    public Expression and(Expression<T> expression) {
-        return new Expression(this.predicate.or(expression.predicate));
+    public Expression or(Expression<T> expression) {
+        return new Expression<T>(this.predicate.or(expression.getPredicate()));
+    }
+
+    public Expression<T> and(Expression<T> expression) {
+        return new Expression<T>(this.predicate.and(expression.getPredicate()));
     }
 }
