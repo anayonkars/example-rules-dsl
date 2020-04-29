@@ -6,6 +6,9 @@ import com.example.rules.dsl.expression.ExpressionBuilder;
 import java.time.LocalDateTime;
 import java.util.function.Predicate;
 
+import static com.example.rules.dsl.employee.RatingValue.*;
+import static com.example.rules.dsl.employee.RoleValue.REGION_LEAD;
+import static com.example.rules.dsl.employee.RoleValue.SENIOR_ENGG;
 import static java.time.LocalDateTime.now;
 
 public final class EmployeeRulesFactory {
@@ -25,12 +28,12 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> employeeWithRatingAboveExpectationsOrHigher() {
         return e -> e.getPerformanceRating() != null
-                && RatingValue.ABOVE_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) <= 0;
+                && ABOVE_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) <= 0;
     }
 
     private static Predicate<Employee> employeeWithBadRatingInLastThreeMonthsOrLess() {
         return e -> e.getPerformanceRating() != null
-                && RatingValue.LOW_PERFORMANCE.equals(e.getPerformanceRating().getRatingValue())
+                && LOW_PERFORMANCE.equals(e.getPerformanceRating().getRatingValue())
                 && e.getPerformanceRating().getRatingDate().isAfter(now().minusMonths(3));
     }
 
@@ -72,17 +75,17 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> employeeWithExtraordinaryRating() {
         return e -> e.getPerformanceRating() != null
-                    && e.getPerformanceRating().getRatingValue().equals(RatingValue.EXTRAORDINARY);
+                    && e.getPerformanceRating().getRatingValue().equals(EXTRAORDINARY);
     }
 
     private static Predicate<Employee> employeeWithAverageRatingInLastNineMonths() {
         return e -> e.getPerformanceRating() != null
-                    && RatingValue.MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0;
+                    && MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0;
     }
 
     private static Predicate<Employee> isTopLevelEmployee() {
         return e -> e.getRole() !=null
-                    && e.getRole().getRoleValue().compareTo(RoleValue.REGION_LEAD) >=0;
+                    && e.getRole().getRoleValue().compareTo(REGION_LEAD) >=0;
     }
 
     private static Predicate<Employee> rulesForPromotionOfMidLevelEmployee() {
@@ -92,8 +95,8 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> isMidLevelEmployee() {
         return e -> e.getRole() != null
-                    && e.getRole().getRoleValue().compareTo(RoleValue.SENIOR_ENGG) > 0
-                    && e.getRole().getRoleValue().compareTo(RoleValue.REGION_LEAD) < 0;
+                    && e.getRole().getRoleValue().compareTo(SENIOR_ENGG) > 0
+                    && e.getRole().getRoleValue().compareTo(REGION_LEAD) < 0;
     }
 
     private static Predicate<Employee> isEligibleForMidLevelPromotion() {
@@ -104,7 +107,7 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> employeeNotMetExpectationsInLastSixMonthsOrLess() {
         return e -> e.getPerformanceRating() != null
-                        && RatingValue.NOT_MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0
+                        && NOT_MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0
                         && e.getPerformanceRating().getRatingDate().isAfter(now().minusMonths(6));
     }
 
@@ -119,6 +122,6 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> isJuniorEmployee() {
         return e -> e.getRole() == null
-                || e.getRole().getRoleValue().compareTo(RoleValue.SENIOR_ENGG) <= 0;
+                || e.getRole().getRoleValue().compareTo(SENIOR_ENGG) <= 0;
     }
 }
