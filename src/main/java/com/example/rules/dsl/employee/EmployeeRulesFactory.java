@@ -30,7 +30,8 @@ public final class EmployeeRulesFactory {
 
     private static Predicate<Employee> employeeWithBadRatingInLastThreeMonthsOrLess() {
         return e -> e.getPerformanceRating() != null
-                && RatingValue.LOW_PERFORMANCE.equals(e.getPerformanceRating().getRatingValue());
+                && RatingValue.LOW_PERFORMANCE.equals(e.getPerformanceRating().getRatingValue())
+                && e.getPerformanceRating().getRatingDate().isAfter(now().minusMonths(3));
     }
 
     private static Predicate<Employee> newEmployee() {

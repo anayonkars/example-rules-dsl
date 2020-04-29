@@ -1,11 +1,10 @@
 package com.example.rules.dsl.employee;
 
-import com.example.rules.dsl.expression.Expression;
-import com.example.rules.dsl.expression.ExpressionBuilder;
 import org.junit.Test;
 
 import static com.example.rules.dsl.employee.EmployeeBuilder.anEmployee;
-import static com.example.rules.dsl.employee.EmployeeRulesFactory.*;
+import static com.example.rules.dsl.employee.EmployeeRulesFactory.employeeEligibleForGratuity;
+import static com.example.rules.dsl.employee.EmployeeRulesFactory.employeeEligibleForInternalJobSwitch;
 import static com.example.rules.dsl.employee.RatingValue.EXTRAORDINARY;
 import static com.example.rules.dsl.employee.RoleValue.ENGG;
 import static java.time.LocalDateTime.now;
