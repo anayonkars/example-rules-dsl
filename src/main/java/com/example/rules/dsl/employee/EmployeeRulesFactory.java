@@ -47,4 +47,78 @@ public final class EmployeeRulesFactory {
                 .build();
     }
 
+    public static Expression<Employee> employeeEligibleForPromotion() {
+        return new ExpressionBuilder<Employee>()
+                .withPredicate(rulesForPromotionOfJuniorEmployee())
+                .or(rulesForPromotionOfMidLevelEmployee())
+                .or(rulesForPromotionOfTopLevelEmployee())
+                .build();
+    }
+
+    private static Predicate<Employee> rulesForPromotionOfTopLevelEmployee() {
+        return e -> isTopLevelEmployee().test(e)
+                    && isEligibleForTopLevelPromotion().test(e);
+    }
+
+    private static Predicate<Employee> isEligibleForTopLevelPromotion() {
+        return e -> employeeWithAverageRatingInLastNineMonths().negate().test(e)
+                    && employeeWithExtraordinaryRating().test(e)
+                    && employeeSpentThreeYearsInCurrentRole().test(e);
+    }
+
+    private static Predicate<Employee> employeeSpentThreeYearsInCurrentRole() {
+        return e -> e.getRole().getRoleDate().isBefore(now().minusYears(3));
+    }
+
+    private static Predicate<Employee> employeeWithExtraordinaryRating() {
+        return e -> e.getPerformanceRating() != null
+                    && e.getPerformanceRating().getRatingValue().equals(RatingValue.EXTRAORDINARY);
+    }
+
+    private static Predicate<Employee> employeeWithAverageRatingInLastNineMonths() {
+        return e -> e.getPerformanceRating() != null
+                    && RatingValue.MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0;
+    }
+
+    private static Predicate<Employee> isTopLevelEmployee() {
+        return e -> e.getRole() !=null
+                    && e.getRole().getRoleValue().compareTo(RoleValue.REGION_LEAD) >=0;
+    }
+
+    private static Predicate<Employee> rulesForPromotionOfMidLevelEmployee() {
+        return e -> isMidLevelEmployee().test(e)
+                && isEligibleForMidLevelPromotion().test(e);
+    }
+
+    private static Predicate<Employee> isMidLevelEmployee() {
+        return e -> e.getRole() != null
+                    && e.getRole().getRoleValue().compareTo(RoleValue.SENIOR_ENGG) > 0
+                    && e.getRole().getRoleValue().compareTo(RoleValue.REGION_LEAD) < 0;
+    }
+
+    private static Predicate<Employee> isEligibleForMidLevelPromotion() {
+        return e -> employeeNotMetExpectationsInLastSixMonthsOrLess().negate().test(e)
+                    && employeeWithRatingAboveExpectationsOrHigher().test(e)
+                    && employeeSpentTwoYearsInCurrentRole().test(e);
+    }
+
+    private static Predicate<Employee> employeeNotMetExpectationsInLastSixMonthsOrLess() {
+        return e -> e.getPerformanceRating() != null
+                        && RatingValue.NOT_MET_EXPECTATIONS.compareTo(e.getPerformanceRating().getRatingValue()) >=0
+                        && e.getPerformanceRating().getRatingDate().isAfter(now().minusMonths(6));
+    }
+
+    private static Predicate<Employee> employeeSpentTwoYearsInCurrentRole() {
+        return e -> e.getRole().getRoleDate().isBefore(now().minusYears(2));
+    }
+
+    private static Predicate<Employee> rulesForPromotionOfJuniorEmployee() {
+        return e -> isJuniorEmployee().test(e)
+                    && employeeEligibleForInternalJobSwitch().getPredicate().test(e);
+    }
+
+    private static Predicate<Employee> isJuniorEmployee() {
+        return e -> e.getRole() == null
+                || e.getRole().getRoleValue().compareTo(RoleValue.SENIOR_ENGG) <= 0;
+    }
 }

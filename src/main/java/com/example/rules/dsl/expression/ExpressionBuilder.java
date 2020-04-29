@@ -18,21 +18,33 @@ public class ExpressionBuilder<T> {
     }
 
     public ExpressionBuilder<T> or(Predicate<T> predicate) {
+        if(this.predicate == null) {
+            throw new UnsupportedOperationException("or must be used for pre-initialized expression");
+        }
         this.predicate = this.predicate.or(predicate);
         return this;
     }
 
     public ExpressionBuilder<T> ornot(Predicate<T> predicate) {
+        if(this.predicate == null) {
+            throw new UnsupportedOperationException("ornot must be used for pre-initialized expression");
+        }
         this.predicate = this.predicate.or(predicate.negate());
         return this;
     }
 
     public ExpressionBuilder<T> and(Predicate<T> predicate) {
+        if(this.predicate == null) {
+            throw new UnsupportedOperationException("and must be used for pre-initialized expression");
+        }
         this.predicate = this.predicate.and(predicate);
         return this;
     }
 
     public ExpressionBuilder<T> andnot(Predicate<T> predicate) {
+        if(this.predicate == null) {
+            throw new UnsupportedOperationException("andnot must be used for pre-initialized expression");
+        }
         this.predicate = this.predicate.and(predicate.negate());
         return this;
     }

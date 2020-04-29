@@ -3,8 +3,7 @@ package com.example.rules.dsl.employee;
 import org.junit.Test;
 
 import static com.example.rules.dsl.employee.EmployeeBuilder.anEmployee;
-import static com.example.rules.dsl.employee.EmployeeRulesFactory.employeeEligibleForGratuity;
-import static com.example.rules.dsl.employee.EmployeeRulesFactory.employeeEligibleForInternalJobSwitch;
+import static com.example.rules.dsl.employee.EmployeeRulesFactory.*;
 import static com.example.rules.dsl.employee.RatingValue.EXTRAORDINARY;
 import static com.example.rules.dsl.employee.RoleValue.ENGG;
 import static java.time.LocalDateTime.now;
@@ -38,6 +37,46 @@ public class EmployeeRulesTest {
                                                                             now().minusYears(1)))
                                 .withRole(new Role(ENGG,
                                                     now().minusYears(1).minusDays(1)))
+                                .build()));
+    }
+
+    @Test
+    public void shouldEvaluateEmployeeForPromotion() {
+        assertFalse(employeeEligibleForPromotion()
+                        .execute(anEmployee()
+                                    .withDoj(now())
+                                    .build()));
+    }
+
+    @Test
+    public void shouldEvaluateJuniorEmployeeForPromotion() {
+        assertTrue(employeeEligibleForPromotion()
+                    .execute(anEmployee()
+                                .withDoj(now().minusYears(2))
+                                .withPerformanceRating(new PerformanceRating(EXTRAORDINARY,
+                                        now().minusYears(1)))
+                                .withRole(new Role(ENGG,
+                                        now().minusYears(1).minusDays(1)))
+                                .build()));
+    }
+
+    @Test
+    public void shouldEvaluateMidLevelEmployeeForPromotion() {
+        assertTrue(employeeEligibleForPromotion()
+                    .execute(anEmployee()
+                                .withDoj(now().minusYears(4))
+                                .withPerformanceRating(new PerformanceRating(EXTRAORDINARY, now().minusYears(1)))
+                                .withRole(new Role(RoleValue.UNIT_LEAD, now().minusYears(2).minusDays(1)))
+                                .build()));
+    }
+
+    @Test
+    public void shouldEvaluateTopLevelEmployeeForPromotion() {
+        assertTrue(employeeEligibleForPromotion()
+                    .execute(anEmployee()
+                                .withDoj(now().minusYears(8))
+                                .withPerformanceRating(new PerformanceRating(EXTRAORDINARY, now().minusYears(1)))
+                                .withRole(new Role(RoleValue.AVP, now().minusYears(4).minusDays(1)))
                                 .build()));
     }
 
