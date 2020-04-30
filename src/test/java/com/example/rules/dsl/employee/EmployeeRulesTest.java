@@ -1,5 +1,6 @@
 package com.example.rules.dsl.employee;
 
+import com.example.rules.dsl.expression.ExpressionBuilder;
 import org.junit.Test;
 
 import static com.example.rules.dsl.employee.EmployeeBuilder.anEmployee;
@@ -7,8 +8,7 @@ import static com.example.rules.dsl.employee.EmployeeRulesFactory.*;
 import static com.example.rules.dsl.employee.RatingValue.EXTRAORDINARY;
 import static com.example.rules.dsl.employee.RoleValue.*;
 import static java.time.LocalDateTime.now;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class EmployeeRulesTest {
     @Test
@@ -78,6 +78,14 @@ public class EmployeeRulesTest {
                                 .withPerformanceRating(new PerformanceRating(EXTRAORDINARY, now().minusYears(1)))
                                 .withRole(new Role(AVP, now().minusYears(4).minusDays(1)))
                                 .build()));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void shouldThrowUnsupportedExpressionWhenInvalidExpressionIsBuilt() {
+        new ExpressionBuilder<Employee>()
+                .and(e -> e != null)
+                .build();
+        fail("Expression should not be built if invalid");
     }
 
 }
